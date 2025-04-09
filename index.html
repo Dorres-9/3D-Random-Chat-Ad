@@ -112,6 +112,10 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 999;
+      backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 20px;
+      border-radius: 20px;
     }
     .cta.show {
       display: block;
@@ -121,9 +125,11 @@
       text-decoration: none;
       background: #00cc66;
       color: white;
-      padding: 12px 28px;
+      padding: 14px 32px;
       border-radius: 999px;
-      font-size: 18px;
+      font-size: 20px;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
   </style>
 </head>
@@ -145,7 +151,7 @@
   </div>
   <div class="response" id="response"></div>
   <div class="cta" id="cta">
-    <a id="cta-link" href="https://adler.ultralifeacademy.com/" target="_blank">Wait List.</a>
+    <a id="cta-link" href="https://adler.ultralifeacademy.com/" target="_blank">Join the Waitlist</a>
   </div>
 
   <script>
