@@ -1,100 +1,79 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>3D Random Chat Demo</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       font-family: sans-serif;
-      background: linear-gradient(to bottom, #f0f4ff, #dbe4f3);
+      background: url('background/bg.jpg') no-repeat center center fixed;
+      background-size: cover;
     }
     body {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
       text-align: center;
       padding: 20px;
     }
     .avatar-container {
+      position: relative;
       width: 100%;
-      max-width: 300px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 20px auto 10px;
+      max-width: 400px;
     }
     .avatar-img {
       width: 100%;
       height: auto;
+      max-height: 500px;
       object-fit: contain;
       transition: all 0.3s ease;
       touch-action: pan-y;
     }
+    .speech-bubble {
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border-radius: 10px;
+      padding: 10px 15px;
+      max-width: 220px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
     .nav-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
       margin-top: 10px;
     }
     .nav-buttons button {
-      padding: 10px 16px;
-      font-size: 18px;
+      margin: 0 10px;
+      padding: 8px 16px;
+      font-size: 16px;
       border: none;
       border-radius: 50%;
       cursor: pointer;
-      background: #cccccc;
-    }
-    .swipe-comment {
-      font-size: 16px;
-      color: #555;
-      margin-top: 8px;
     }
     .question {
       font-size: 20px;
-      margin: 20px 16px 10px;
-      color: #333;
+      margin: 20px 0 10px;
+      color: white;
     }
     .choices button {
       background: #0066ff;
       color: white;
       padding: 10px 20px;
-      margin: 6px;
+      margin: 5px;
       border: none;
       border-radius: 999px;
       font-size: 16px;
       cursor: pointer;
-      transition: background 0.3s;
     }
-    .choices button:hover {
-      background: #004ec2;
-    }
-    .response {
-      font-size: 18px;
+    .response, .cta {
       margin-top: 20px;
-      color: #444;
-      display: none;
-      opacity: 0;
-      transition: opacity 0.6s ease;
-    }
-    .response.show {
-      display: block;
-      opacity: 1;
-    }
-    .cta {
-      margin: 20px;
-      display: none;
-      opacity: 0;
-      transition: opacity 0.6s ease;
-    }
-    .cta.show {
-      display: block;
-      opacity: 1;
+      color: white;
     }
     .cta a {
       text-decoration: none;
@@ -108,15 +87,15 @@
 </head>
 <body>
   <div class="avatar-container">
-    <img id="avatar" class="avatar-img" src="https://i.ibb.co/3RqRnr6/avatar-female-realistic.png" alt="Avatar" />
+    <img id="avatar" class="avatar-img" src="images/avatar-female.png" alt="Avatar" />
+    <div id="speech" class="speech-bubble">What type of person are you most attracted to?</div>
   </div>
   <div class="nav-buttons">
     <button onclick="swipeLeft()">⟵</button>
     <button onclick="swipeRight()">⟶</button>
   </div>
-  <div class="swipe-comment">Swipe or tap to preview other profiles</div>
 
-  <div class="question" id="question">What type of person are you most attracted to?</div>
+  <div class="question" id="question"></div>
   <div class="choices" id="choices">
     <button onclick="selectChoice('calm')">Someone calm and quiet</button>
     <button onclick="selectChoice('funny')">Someone fun and energetic</button>
@@ -129,84 +108,45 @@
 
   <script>
     const avatarList = [
-      'https://i.ibb.co/3RqRnr6/avatar-female-realistic.png',
-      'https://i.ibb.co/vjNm7qK/avatar-male-realistic.png'
+      'images/avatar-female.png',
+      'images/avatar-male.png'
     ];
     let avatarIndex = 0;
     const avatarElement = document.getElementById('avatar');
+    const speech = document.getElementById('speech');
 
     function swipeLeft() {
       avatarIndex = (avatarIndex - 1 + avatarList.length) % avatarList.length;
-      animateSwipe();
       avatarElement.src = avatarList[avatarIndex];
     }
 
     function swipeRight() {
       avatarIndex = (avatarIndex + 1) % avatarList.length;
-      animateSwipe();
       avatarElement.src = avatarList[avatarIndex];
     }
 
-    function animateSwipe() {
-      avatarElement.style.transform = 'scale(0.95)';
-      setTimeout(() => {
-        avatarElement.style.transform = 'scale(1)';
-      }, 150);
-    }
-
-    // Touch swipe support for mobile
-    let startX = 0;
-    avatarElement.addEventListener('touchstart', (e) => {
-      startX = e.touches[0].clientX;
-    });
-
-    avatarElement.addEventListener('touchend', (e) => {
-      const endX = e.changedTouches[0].clientX;
-      if (startX - endX > 50) {
-        swipeRight();
-      } else if (endX - startX > 50) {
-        swipeLeft();
-      }
-    });
-
     let step = 1;
-
     function selectChoice(type) {
-      const question = document.getElementById('question');
-      const choices = document.getElementById('choices');
       const response = document.getElementById('response');
-      const cta = document.getElementById('cta');
-
+      const choices = document.getElementById('choices');
       if (step === 1) {
-        if (type === 'calm') {
-          response.innerText = "Oh, that's totally my type too!";
-        } else if (type === 'funny') {
-          response.innerText = "I love fun and outgoing people!";
-        } else {
-          response.innerText = "Smart and logical? You sound awesome!";
-        }
-        response.classList.add('show');
+        if (type === 'calm') speech.innerText = "Oh, that's totally my type too!";
+        else if (type === 'funny') speech.innerText = "I love fun and outgoing people!";
+        else speech.innerText = "Smart and logical? You sound awesome!";
+        step = 2;
         setTimeout(() => {
-          response.classList.remove('show');
-          question.innerText = 'What do you look for in a first chat?';
+          speech.innerText = "What do you look for in a first chat?";
           choices.innerHTML = `
-            <button onclick=\"selectChoice('joke')\">A good laugh</button>
-            <button onclick=\"selectChoice('deep')\">A deep conversation</button>
-            <button onclick=\"selectChoice('random')\">Just something random</button>
+            <button onclick="selectChoice('joke')">A good laugh</button>
+            <button onclick="selectChoice('deep')">A deep conversation</button>
+            <button onclick="selectChoice('random')">Just something random</button>
           `;
-          step = 2;
-        }, 1500);
-
-      } else if (step === 2) {
-        if (type === 'joke') {
-          response.innerText = "Same! Humor makes everything better.";
-        } else if (type === 'deep') {
-          response.innerText = "Deep talks are my favorite too.";
-        } else {
-          response.innerText = "Random is fun! Keeps things interesting.";
-        }
-        response.classList.add('show');
-        cta.classList.add('show');
+        }, 1200);
+      } else {
+        if (type === 'joke') speech.innerText = "Same! Humor makes everything better.";
+        else if (type === 'deep') speech.innerText = "Deep talks are my favorite too.";
+        else speech.innerText = "Random is fun! Keeps things interesting.";
+        document.getElementById('cta').style.display = 'block';
       }
     }
   </script>
