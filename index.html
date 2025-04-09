@@ -126,22 +126,28 @@
       z-index: 999;
       backdrop-filter: blur(15px);
       background-color: rgba(255, 255, 255, 0.3);
-      padding: 30px;
+      padding: 20px;
       border-radius: 20px;
+      max-width: 90vw;
+      box-sizing: border-box;
     }
     .cta.show {
       display: block;
       opacity: 1;
     }
     .cta a {
+      display: inline-block;
       text-decoration: none;
       background: #00cc66;
       color: white;
-      padding: 20px 36px;
+      padding: 16px 24px;
       border-radius: 999px;
-      font-size: 26px;
+      font-size: 20px;
       font-weight: bold;
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 320px;
+      box-sizing: border-box;
     }
   </style>
 </head>
@@ -196,12 +202,10 @@
       }, 150);
     }
 
-    // Touch swipe support for mobile
     let startX = 0;
     avatarElement.addEventListener('touchstart', (e) => {
       startX = e.touches[0].clientX;
     });
-
     avatarElement.addEventListener('touchend', (e) => {
       const endX = e.changedTouches[0].clientX;
       if (startX - endX > 50) {
@@ -212,7 +216,6 @@
     });
 
     let step = 1;
-
     function selectChoice(type) {
       const question = document.getElementById('question');
       const choices = document.getElementById('choices');
@@ -244,7 +247,6 @@
         else speech.innerText = "Random is fun! Keeps things interesting.";
 
         response.classList.add('show');
-
         setTimeout(() => {
           cta.classList.add('show');
           overlay.style.display = 'block';
