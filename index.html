@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Random Chat Demo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: linear-gradient(to bottom, #f0f4ff, #dbe4f3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+    canvas {
+      margin-top: 20px;
+    }
+    .question {
+      font-size: 20px;
+      margin: 20px 0;
+      color: #333;
+    }
+    .choices button {
+      background: #0066ff;
+      color: white;
+      padding: 10px 20px;
+      margin: 8px;
+      border: none;
+      border-radius: 999px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .choices button:hover {
+      background: #004ec2;
+    }
+    .response {
+      font-size: 18px;
+      margin-top: 30px;
+      color: #444;
+      display: none;
+    }
+    .cta {
+      margin-top: 30px;
+      display: none;
+    }
+    .cta a {
+      text-decoration: none;
+      background: #00cc66;
+      color: white;
+      padding: 12px 28px;
+      border-radius: 999px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="question" id="question">What type of person are you most attracted to?</div>
+  <div class="choices" id="choices">
+    <button onclick="selectChoice('calm')">Someone calm and quiet</button>
+    <button onclick="selectChoice('funny')">Someone fun and energetic</button>
+    <button onclick="selectChoice('smart')">Someone smart and logical</button>
+  </div>
+  <div class="response" id="response"></div>
+  <div class="cta" id="cta">
+    <a href="https://yourapp.com" target="_blank">Start real matching in the app</a>
+  </div>
+
+  <canvas id="sceneCanvas" width="300" height="300"></canvas>
+
+  <script>
+    // Simple Three.js 3D spinning cube
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 300 / 300, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('sceneCanvas'), alpha: true });
+    renderer.setSize(300, 300);
+
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshStandardMaterial({ color: 0x0077ff });
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    const light = new THREE.PointLight(0xffffff, 1, 100);
+    light.position.set(5, 5, 5);
+    scene.add(light);
+
+    camera.position.z = 5;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      cube.rotation.x += 0.01;
+      cube.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Interaction Logic
+    let step = 1;
+
+    function selectChoice(type) {
+      const question = document.getElementById('question');
+      const choices = document.getElementById('choices');
+      const response = document.getElementById('response');
+      const cta = document.getElementById('cta');
+
+      if (step === 1) {
+        if (type === 'calm') {
+          response.innerText = "Oh, that's totally my type too!";
+        } else if (type === 'funny') {
+          response.innerText = "I love fun and outgoing people!";
+        } else {
+          response.innerText = "Smart and logical? You sound awesome!";
+        }
+        response.style.display = 'block';
+        setTimeout(() => {
+          response.style.display = 'none';
+          question.innerText = 'What do you look for in a first chat?';
+          choices.innerHTML = `
+            <button onclick=\"selectChoice('joke')\">A good laugh</button>
+            <button onclick=\"selectChoice('deep')\">A deep conversation</button>
+            <button onclick=\"selectChoice('random')\">Just something random</button>
+          `;
+          step = 2;
+        }, 1500);
+
+      } else if (step === 2) {
+        if (type === 'joke') {
+          response.innerText = "Same! Humor makes everything better.";
+        } else if (type === 'deep') {
+          response.innerText = "Deep talks are my favorite too.";
+        } else {
+          response.innerText = "Random is fun! Keeps things interesting.";
+        }
+        response.style.display = 'block';
+        cta.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
