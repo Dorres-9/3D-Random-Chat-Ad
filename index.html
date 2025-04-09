@@ -18,8 +18,34 @@
       padding: 20px;
       text-align: center;
     }
-    canvas {
-      margin-top: 20px;
+    .avatar-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+    }
+    .avatar-img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .nav-buttons {
+      margin-top: 10px;
+    }
+    .nav-buttons button {
+      margin: 0 10px;
+      padding: 6px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #cccccc;
+    }
+    .swipe-comment {
+      font-size: 14px;
+      color: #666;
+      margin-top: 8px;
     }
     .question {
       font-size: 20px;
@@ -61,6 +87,15 @@
   </style>
 </head>
 <body>
+  <div class="avatar-container">
+    <img id="avatar" class="avatar-img" src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=150&q=80" alt="Avatar" />
+  </div>
+  <div class="nav-buttons">
+    <button onclick="swipeLeft()">⟵</button>
+    <button onclick="swipeRight()">⟶</button>
+  </div>
+  <div class="swipe-comment">Swipe to preview other profiles</div>
+
   <div class="question" id="question">What type of person are you most attracted to?</div>
   <div class="choices" id="choices">
     <button onclick="selectChoice('calm')">Someone calm and quiet</button>
@@ -69,13 +104,29 @@
   </div>
   <div class="response" id="response"></div>
   <div class="cta" id="cta">
-    <a href="https://yourapp.com" target="_blank">Start real matching in the app</a>
+    <a href="https://adler.ultralifeacademy.com/" target="_blank">Pre-register and meet someone new.</a>
   </div>
 
   <canvas id="sceneCanvas" width="300" height="300"></canvas>
 
   <script>
-    // Simple Three.js 3D spinning cube
+    const avatarList = [
+      'https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=150&q=80',
+      'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80'
+    ];
+    let avatarIndex = 0;
+    const avatarElement = document.getElementById('avatar');
+
+    function swipeLeft() {
+      avatarIndex = (avatarIndex - 1 + avatarList.length) % avatarList.length;
+      avatarElement.src = avatarList[avatarIndex];
+    }
+
+    function swipeRight() {
+      avatarIndex = (avatarIndex + 1) % avatarList.length;
+      avatarElement.src = avatarList[avatarIndex];
+    }
+
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, 300 / 300, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('sceneCanvas'), alpha: true });
@@ -100,7 +151,6 @@
     }
     animate();
 
-    // Interaction Logic
     let step = 1;
 
     function selectChoice(type) {
