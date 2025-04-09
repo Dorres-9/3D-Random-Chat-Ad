@@ -4,14 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>3D Random Chat Demo</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       font-family: sans-serif;
-      background: linear-gradient(to bottom, #f0f4ff, #dbe4f3);
+      background: url('background/bg.jpg') no-repeat center center fixed;
+      background-size: cover;
     }
     body {
       display: flex;
@@ -20,17 +20,18 @@
       justify-content: flex-start;
       text-align: center;
       padding: 10px;
+      transform: scale(0.9);
     }
     .avatar-container {
       position: relative;
       width: 100%;
-      max-width: 280px;
+      max-width: 260px;
       margin: 10px auto;
     }
     .avatar-img {
       width: 100%;
       height: auto;
-      max-height: 400px;
+      max-height: 360px;
       object-fit: contain;
       transition: all 0.3s ease;
       touch-action: pan-y;
@@ -70,7 +71,7 @@
     .question {
       font-size: 18px;
       margin: 15px 12px 8px;
-      color: #333;
+      color: #fff;
     }
     .choices button {
       background: #0066ff;
@@ -89,7 +90,7 @@
     .response {
       font-size: 16px;
       margin-top: 15px;
-      color: #444;
+      color: #fff;
       display: none;
       opacity: 0;
       transition: opacity 0.6s ease;
@@ -103,6 +104,11 @@
       display: none;
       opacity: 0;
       transition: opacity 0.6s ease;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 999;
     }
     .cta.show {
       display: block;
@@ -112,15 +118,15 @@
       text-decoration: none;
       background: #00cc66;
       color: white;
-      padding: 10px 20px;
+      padding: 12px 28px;
       border-radius: 999px;
-      font-size: 16px;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
   <div class="avatar-container">
-    <img id="avatar" class="avatar-img" src="https://i.ibb.co/3RqRnr6/avatar-female-realistic.png" alt="Avatar" />
+    <img id="avatar" class="avatar-img" src="images/avatar-female-transparent.png" alt="Avatar" />
     <div id="speech" class="speech-bubble">What type of person are you most attracted to?</div>
   </div>
   <div class="nav-buttons">
@@ -137,13 +143,13 @@
   </div>
   <div class="response" id="response"></div>
   <div class="cta" id="cta">
-    <a href="https://adler.ultralifeacademy.com/" target="_blank">Pre-register and meet someone new.</a>
+    <a id="cta-link" href="https://adler.ultralifeacademy.com/" target="_blank">Pre-register and meet someone new.</a>
   </div>
 
   <script>
     const avatarList = [
-      'https://i.ibb.co/3RqRnr6/avatar-female-realistic.png',
-      'https://i.ibb.co/vjNm7qK/avatar-male-realistic.png'
+      'images/avatar-female-transparent.png',
+      'images/avatar-male-transparent.png'
     ];
     let avatarIndex = 0;
     const avatarElement = document.getElementById('avatar');
@@ -190,15 +196,13 @@
       const choices = document.getElementById('choices');
       const response = document.getElementById('response');
       const cta = document.getElementById('cta');
+      const ctaLink = document.getElementById('cta-link');
 
       if (step === 1) {
-        if (type === 'calm') {
-          speech.innerText = "Oh, that's totally my type too!";
-        } else if (type === 'funny') {
-          speech.innerText = "I love fun and outgoing people!";
-        } else {
-          speech.innerText = "Smart and logical? You sound awesome!";
-        }
+        if (type === 'calm') speech.innerText = "Oh, that's totally my type too!";
+        else if (type === 'funny') speech.innerText = "I love fun and outgoing people!";
+        else speech.innerText = "Smart and logical? You sound awesome!";
+
         response.classList.add('show');
         setTimeout(() => {
           response.classList.remove('show');
@@ -213,15 +217,18 @@
         }, 1500);
 
       } else if (step === 2) {
-        if (type === 'joke') {
-          speech.innerText = "Same! Humor makes everything better.";
-        } else if (type === 'deep') {
-          speech.innerText = "Deep talks are my favorite too.";
-        } else {
-          speech.innerText = "Random is fun! Keeps things interesting.";
-        }
+        if (type === 'joke') speech.innerText = "Same! Humor makes everything better.";
+        else if (type === 'deep') speech.innerText = "Deep talks are my favorite too.";
+        else speech.innerText = "Random is fun! Keeps things interesting.";
+
         response.classList.add('show');
-        cta.classList.add('show');
+
+        setTimeout(() => {
+          cta.classList.add('show');
+          setTimeout(() => {
+            window.location.href = ctaLink.href;
+          }, 2000);
+        }, 3000);
       }
     }
   </script>
